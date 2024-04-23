@@ -1,40 +1,49 @@
+
+const readline = require('readline');
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
 class Producto {
     constructor(codigo, nombre, precio) {
         this.codigo = codigo;
         this.nombre = nombre;
         this.precio = precio;
-    
     }
 }
-class cliente{
-    constructor(nombre, identificacion){
-        this.nombre= nombre;
-        this.identificacion=identificacion;
+
+class Cliente {
+    constructor(nombre, identificacion) {
+        this.nombre = nombre;
+        this.identificacion = identificacion;
     }
-  
-    mostrarCliente(){
+
+    mostrarCliente() {
         console.log(`Informacion del cliente \n Nombre: ${this.nombre} \n Identificacion: ${this.identificacion}`);
     }
-} 
-  
+}
+
 class CarritoDeCompras {
     constructor() {
         this.productos = [];
-        this.cliente = cliente;
+        this.cliente = null;
     }
 
     agregarCliente(cliente) {
         this.cliente = cliente;
     }
+
     agregarProducto(producto) {
-        this.productos.push(producto);//el push añade un nuevo elemento al array
+        this.productos.push(producto);
         console.log(`${producto.codigo}. ${producto.nombre} ha sido agregado al carrito.`);
     }
 
     calcularTotal() {
         let total = 0;
         this.productos.forEach(producto => {
-        total += producto.precio;
+            total += producto.precio;
         });
         return total;
     }
@@ -44,7 +53,7 @@ class CarritoDeCompras {
         console.log("Productos en el carrito:");
         console.log(" ");
         this.productos.forEach(producto => {
-        console.log(`${producto.codigo}. ${producto.nombre}...Precio: ${producto.precio}`);
+            console.log(`${producto.codigo}. ${producto.nombre}...Precio: ${producto.precio}`);
         });
     }
 
@@ -52,33 +61,46 @@ class CarritoDeCompras {
         console.log(" ");
         console.log("-- Factura: --");
         console.log(" ");
-        this.cliente.mostrarCliente()
+        if (this.cliente)
+            this.cliente.mostrarCliente();
         this.mostrarProductos();
         console.log(`Total a pagar: ${this.calcularTotal()}`);
     }
+
     vaciarCarrito() {
         this.productos = [];
         console.log("El carrito ha sido vaciado.");
-    }    
-
+    }
 }
+
 console.log(" ");
 
+rl.question('Ingrese su nombre: ', (nombre) => {
+    rl.question('Ingrese su identificación: ', (identificacion) => {
+        let cliente1 = new Cliente(nombre, identificacion);
+        let carrito = new CarritoDeCompras();
+        carrito.agregarCliente(cliente1);
 
-let producto1 = new Producto(1, "blush anika", 25000);
-let producto2 = new Producto(2, "Polvos sueltos AME", 30000);
-let producto3 = new Producto(3, "Lip Oil Ruby Rose", 40000);
-let cliente1 = new cliente('Mar', '123456789');
+        function agregarProducto() {
+            rl.question('Ingrese el nombre del producto: ', (nombreProducto) => {
+                rl.question('Ingrese el código del producto: ', (codigoProducto) => {
+                    rl.question('Ingrese el precio del producto: ', (precioProducto) => {
+                        let producto = new Producto(parseInt(codigoProducto), nombreProducto, parseInt(precioProducto));
+                        carrito.agregarProducto(producto);
+                        rl.question('¿Desea agregar otro producto? (si/no): ', (respuesta) => {
+                            if (respuesta.toLowerCase() === 's1') {
+                                agregarProducto();
+                            } else {
+                                rl.close();
+                                carrito.mostrarFactura();
+                                carrito.vaciarCarrito();
+                            }
+                        });
+                    });
+                });
+            });
+        }
 
-let carrito = new CarritoDeCompras();
-
-carrito.agregarCliente(cliente1);
-carrito.agregarProducto(producto1);
-carrito.agregarProducto(producto2);
-carrito.agregarProducto(producto3);
-
-carrito.mostrarProductos();
-carrito.mostrarFactura();
-carrito.vaciarCarrito();
-
-  
+        agregarProducto();
+    });
+});
