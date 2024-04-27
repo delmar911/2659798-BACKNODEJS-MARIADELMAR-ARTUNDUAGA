@@ -88,10 +88,9 @@ rl.question('Ingrese su nombre: ', (nombre) => {
                         let producto = new Producto(parseInt(codigoProducto), nombreProducto, parseInt(precioProducto));
                         carrito.agregarProducto(producto);
                         rl.question('¿Desea agregar otro producto? (si/no): ', (respuesta) => {
-                            if (respuesta.toLowerCase() === 's1') {
+                            if (respuesta.toLowerCase() === 'si') {
                                 agregarProducto();
                             } else {
-                                rl.close();
                                 carrito.mostrarFactura();
                                 carrito.vaciarCarrito();
                             }
